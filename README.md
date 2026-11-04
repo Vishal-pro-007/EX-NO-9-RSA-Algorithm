@@ -36,11 +36,70 @@ Step 5: **Security Foundation
 The security of RSA relies on the difficulty of factoring large numbers; thus, choosing sufficiently large prime numbers for \( p \) and \( q \) is crucial for security.
 
 ## Program:
+```
 
+#include <stdio.h>
 
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
 
+int modPower(int base, int exp, int mod) {
+    int result = 1;
+    while (exp > 0) {
+        result = (result * base) % mod;
+        exp--;
+    }
+    return result;
+}
+
+int main() {
+    int p = 3, q = 11;
+    int n = p * q;
+    int phi = (p - 1) * (q - 1);
+    int e, d = 1;
+    int msg, cipher, decrypted;
+
+    // Choose public key exponent
+    for (e = 2; e < phi; e++) {
+        if (gcd(e, phi) == 1)
+            break;
+    }
+
+    // Calculate private key
+    while ((d * e) % phi != 1)
+        d++;
+
+    printf("Public Key: (%d, %d)\n", e, n);
+    printf("Private Key: (%d, %d)\n", d, n);
+
+    printf("Enter message (0 to %d): ", n - 1);
+    scanf("%d", &msg);
+
+    if (msg < 0 || msg >= n) {
+        printf("Invalid message!\n");
+        return 1;
+    }
+
+    // Encryption
+    cipher = modPower(msg, e, n);
+    printf("Encrypted message: %d\n", cipher);
+
+    // Decryption
+    decrypted = modPower(cipher, d, n);
+    printf("Decrypted message: %d\n", decrypted);
+
+    return 0;
+}
+```
 
 ## Output:
+<img width="775" height="431" alt="EX09" src="https://github.com/user-attachments/assets/45b1f8ca-1259-442d-8d86-03fce0760e2e" />
 
 
 
